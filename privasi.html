@@ -1,0 +1,76 @@
+<!doctype html>
+<html lang="id">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Kebijakan privasi — Pelacak Aset</title>
+<meta name="description" content="Kebijakan privasi aplikasi Android Pelacak Aset: data apa yang diproses, untuk apa, dan cara menghapusnya.">
+<link rel="stylesheet" href="/aset.css">
+</head>
+<body>
+<header><div class="wrap">
+  <span class="brand">Pelacak Aset</span>
+  <nav><a href="/privasi">Kebijakan privasi</a><a href="/hapus-akun">Hapus akun</a></nav>
+</div></header>
+<main class="wrap">
+<h1>Kebijakan Privasi — Pelacak Aset</h1>
+<p class="meta"><strong>Terakhir diperbarui:</strong> 24 Oktober 2026</p>
+<p><strong>Berlaku untuk:</strong> aplikasi Android <strong>Pelacak Aset</strong> (Royal Tulip Springhill Resort Jimbaran)</p>
+<p>Aplikasi ini dipakai untuk mencatat inventaris aset: daftar aset, lokasi, status pinjam, dan</p>
+<p>riwayat perubahannya. Kebijakan ini menjelaskan data apa yang diproses, untuk apa, dan bagaimana</p>
+<p>menghapusnya — termasuk menghapus akun sepenuhnya tanpa perlu menghubungi kami.</p>
+<h2>1. Pengendali data</h2>
+<p>Royal Tulip Springhill Resort Jimbaran</p>
+<p>Jalan Jimbaran Hijau Kelod, Badung 80361, Bali, Indonesia</p>
+<p>Telepon: +62 361 358 5888</p>
+<p>Email privasi: <strong>it.rtsj@gmail.com</strong></p>
+<h2>2. Data yang dikumpulkan</h2>
+<ul><li><strong>Data akun:</strong> alamat email dan kata sandi (kata sandi disimpan dalam bentuk hash oleh penyedia autentikasi — kami tidak pernah melihat kata sandi asli). Bila Anda masuk dengan Google, kami menerima alamat email dan identitas Google dasar (nama dan foto profil) dari Google.</li><li><strong>Data aset yang Anda masukkan:</strong> nama aset, kode/barcode, lokasi, kategori, merek, model, nomor seri, kondisi, status pinjam, dan riwayat perubahan (waktu, jenis perubahan, catatan lokasi).</li><li><strong>Data teknis:</strong> tidak ada analitik, tidak ada iklan, tidak ada pelacakan lokasi perangkat, tidak ada pembuatan profil.</li></ul>
+<p>Kami <strong>tidak</strong> mengumpulkan: kontak, SMS, riwayat panggilan, foto/galeri, lokasi GPS perangkat,</p>
+<p>maupun daftar aplikasi lain di perangkat Anda.</p>
+<h2>3. Kamera</h2>
+<p>Kamera dipakai <strong>hanya</strong> saat Anda memindai barcode, melalui pemindai Google ML Kit (Google Play</p>
+<p>Services). Gambar diproses di perangkat untuk membaca kode; gambar <strong>tidak disimpan</strong> dan **tidak</p>
+<p>dikirim** ke server kami. Hanya teks kode hasil pindai yang dikirim, sebagai kode aset.</p>
+<h2>4. Penyimpanan, lokasi server, dan pengamanan</h2>
+<ul><li>Basis data: <strong>Supabase</strong> (PostgreSQL), region <strong>Southeast Asia (Singapore) / <code>ap-southeast-1</code></strong>. Ini region terdekat ke Bali yang tersedia: Supabase belum menyediakan region di Indonesia (pilihannya Singapura, Mumbai, Tokyo, Seoul, Sydney). Data tidak keluar dari Asia Tenggara.</li><li>Seluruh lalu lintas data memakai <strong>HTTPS</strong>. Data disimpan pada penyimpanan yang dienkripsi oleh penyedia.</li><li>Setiap akun hanya dapat mengakses datanya sendiri melalui <strong>Row Level Security</strong> di basis data — pembatasannya ada di server, bukan hanya di aplikasi.</li><li>Kunci API yang tertanam di aplikasi adalah kunci publik (anon); ia tidak memberi akses ke data akun lain tanpa sesi login yang sah.</li></ul>
+<h2>5. Penggunaan data</h2>
+<p>Data hanya dipakai untuk menjalankan fitur aplikasi: menampilkan daftar aset, mencatat status</p>
+<p>pinjam/kembali, memindahkan lokasi, memindai barcode, dan menampilkan riwayat. Data **tidak</p>
+<p>dijual**, tidak dibagikan ke pihak ketiga untuk pemasaran, dan tidak dipakai untuk iklan.</p>
+<p>Pihak ketiga yang memproses data semata-mata sebagai penyedia layanan teknis:</p>
+<ul><li><strong>Supabase</strong> — basis data dan autentikasi.</li><li><strong>Google</strong> — pemindaian barcode di perangkat (ML Kit) dan, bila Anda memilihnya, login Google.</li></ul>
+<h2>6. Retensi</h2>
+<p>Data disimpan selama akun Anda ada. Selama akun aktif, data tidak dihapus otomatis. Setelah akun</p>
+<p>dihapus, data aplikasi (aset dan riwayat) terhapus dan tidak dapat dipulihkan — lihat bagian 7.</p>
+<p>Log teknis dibuat otomatis oleh penyedia layanan (Supabase, Google, dan jaringan) untuk keamanan</p>
+<p>dan pemecahan masalah. Isinya metadata koneksi — waktu, alamat IP, kode status — <strong>bukan</strong> isi aset</p>
+<p>Anda. Retensi mengikuti setelan penyedia (umumnya harian hingga mingguan) dan tidak kami perpanjang;</p>
+<p>kami tidak menyimpan log sendiri.</p>
+<h2>7. Penghapusan akun dan data</h2>
+<p>Anda dapat menghapus akun dan <strong>seluruh</strong> data kapan saja, tanpa menghubungi kami:</p>
+<ol><li><strong>Di aplikasi:</strong> buka menu <strong>⋮ (tiga titik) di kanan atas → "Hapus akun"</strong>, lalu konfirmasi. Penghapusan berjalan saat itu juga.</li><li><strong>Lewat web:</strong> https://moreover-definitely-quotations-gore.trycloudflare.com/hapus-akun — halaman publik, dapat dibuka tanpa login, berisi instruksi yang sama beserta jalur email bila aplikasi tidak bisa dipakai. Halaman ini akan dipindahkan ke domain resmi (<code>rtspringhillresort.com</code>) tanpa mengubah isinya; alamat di aplikasi ikut diperbarui saat itu.</li></ol>
+<p>Yang dihapus: akun (alamat email), <strong>seluruh</strong> aset, dan <strong>seluruh</strong> riwayat aset. Penghapusan</p>
+<p>bersifat <strong>permanen</strong> — data tidak dapat dikembalikan dan kami tidak menyimpan salinan cadangan</p>
+<p>data pengguna. Satu-satunya pengecualian adalah log teknis penyedia layanan (bagian 6) yang tidak</p>
+<p>memuat isi aset.</p>
+<h2>8. Hak Anda</h2>
+<ul><li><strong>Melihat</strong> data Anda: seluruh aset dan riwayat tampil di aplikasi.</li><li><strong>Memperbaiki</strong> data: setiap aset dapat diubah di aplikasi.</li><li><strong>Menghapus</strong> data: hapus per aset, atau hapus seluruh akun (bagian 7).</li><li><strong>Bertanya/keberatan:</strong> hubungi email privasi di bagian 1.</li></ul>
+<h2>9. Login Google</h2>
+<p>Bila Anda memilih "Masuk dengan Google", kami memakai OAuth resmi Google dan hanya menerima email</p>
+<p>serta identitas dasar akun Google Anda. Kami <strong>tidak</strong> meminta atau mendapat akses ke Gmail, Google</p>
+<p>Drive, Kalender, atau data Google lainnya.</p>
+<h2>10. Anak-anak</h2>
+<p>Aplikasi ini bukan untuk anak di bawah 13 tahun dan tidak dengan sengaja mengumpulkan data anak.</p>
+<h2>11. Perubahan kebijakan</h2>
+<p>Bila kebijakan ini berubah, tanggal "Terakhir diperbarui" di atas ikut diperbarui dan versi baru</p>
+<p>dipublikasikan di URL yang sama. Perubahan yang mengurangi hak Anda akan diumumkan di aplikasi</p>
+<p>sebelum berlaku.</p>
+<h2>12. Kontak</h2>
+<p>Email: <strong>it.rtsj@gmail.com</strong> · Telepon: +62 361 358 5888 · Alamat: Jalan Jimbaran Hijau Kelod, Badung 80361.</p>
+</main>
+<footer><div class="wrap">
+  Royal Tulip Springhill Resort Jimbaran · Pelacak Aset · Halaman ini dibuat dari PRIVACY.md
+</div></footer>
+</body>
+</html>
