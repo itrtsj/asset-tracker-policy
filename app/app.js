@@ -301,6 +301,7 @@ function render() {
   const list = $('#list');
   clear(list);
   for (const a of rows.slice(0, state.limit)) list.append(card(a));
+  observeThumbs();
 
   const empty = $('#empty');
   empty.hidden = rows.length > 0;
@@ -320,6 +321,7 @@ function card(a) {
   const late = isOverdue(a);
   const sub = [a.category ? label(a.category) : null, a.status].filter(Boolean).join(' · ');
   return el('button', {class: 'card', onclick: () => openDetail(a.id)},
+    a.photo_path ? el('div', {class: 'thumb', 'data-path': a.photo_path}) : null,
     el('div', {class: 'main'},
       el('div', {class: 'name', text: a.name}),
       el('div', {class: 'meta', text: `${a.code} · ${a.location || 'Tanpa lokasi'}`}),
@@ -330,6 +332,56 @@ function card(a) {
     ),
     el('span', {class: 'pill g', text: a.borrowed ? 'Check-in' : 'Check-out'}),
   );
+}
+
+/* ----------------------------------------------------- thumbnail (malas) */
+/* Foto disimpan di bucket privat, jadi tiap thumbnail butuh fetch bertoken.
+   Dimuat hanya saat kartu terlihat, maksimal 3 permintaan bersamaan, hasil
+   disimpan di cache agar tidak diunduh ulang saat daftar dirender lagi. */
+const thumbCache = new Map();
+let thumbBusy = 0;
+const thumbQueue = [];
+const thumbSeen = new WeakSet();
+
+function paintThumb(box, url) {
+  clear(box);
+  box.append(el('img', {src: url, alt: ''}));
+}
+function pumpThumbs() {
+  while (thumbBusy < 3 && thumbQueue.length) {
+    const box = thumbQueue.shift();
+    if (!box.isConnected) continue;
+    const path = box.dataset.path;
+    const hit = thumbCache.get(path);
+    if (hit) { paintThumb(box, hit); continue; }
+    thumbBusy++;
+    api(`/storage/v1/object/authenticated/${BUCKET}/${path}`, {binary: true})
+      .then(bytes => {
+        const url = URL.createObjectURL(new Blob([bytes], {type: 'image/jpeg'}));
+        thumbCache.set(path, url);
+        if (box.isConnected) paintThumb(box, url);
+      })
+      .catch(() => { /* foto hilang / tanpa izin — kartu tetap tampil */ })
+      .finally(() => { thumbBusy--; pumpThumbs(); });
+  }
+}
+const thumbWatch = 'IntersectionObserver' in window ? new IntersectionObserver(es => {
+  for (const e of es) if (e.isIntersecting) { thumbWatch.unobserve(e.target); thumbQueue.push(e.target); pumpThumbs(); }
+}, {rootMargin: '200px'}) : null;
+
+function observeThumbs() {
+  let eager = 6;   // layar pertama langsung dimuat, sisanya menunggu terlihat
+  document.querySelectorAll('#list .thumb').forEach(box => {
+    if (thumbSeen.has(box)) return;
+    thumbSeen.add(box);
+    if (eager > 0) { eager--; thumbQueue.push(box); return; }
+    if (thumbWatch) thumbWatch.observe(box); else thumbQueue.push(box);
+  });
+  pumpThumbs();
+}
+function forgetThumb(path) {
+  const url = thumbCache.get(path);
+  if (url) { URL.revokeObjectURL(url); thumbCache.delete(path); }
 }
 
 /* ------------------------------------------------------------------ dialog */
@@ -485,6 +537,7 @@ function photoControls(a) {
     if (!await askConfirm('Hapus foto?', `Foto ${a.code} akan dihapus dari server.`, 'Hapus')) return;
     await api('/rest/v1/rpc/set_photo', {method: 'POST', body: {p_asset: a.id, p_has_photo: false}});
     await api(`/storage/v1/object/${BUCKET}`, {method: 'DELETE', body: {prefixes: [a.photo_path]}});
+    forgetThumb(a.photo_path);
     a.photo_path = null;
     toast('Foto dihapus.');
     closeDlg(); await refresh();
@@ -516,6 +569,7 @@ async function uploadPhoto(a, file) {
     await api(`/storage/v1/object/${BUCKET}/${path}`, {method: 'POST', body: blob,
       headers: {'Content-Type': 'image/jpeg', 'x-upsert': 'true', 'cache-control': 'no-cache'}});
     await api('/rest/v1/rpc/set_photo', {method: 'POST', body: {p_asset: a.id, p_has_photo: true}});
+    forgetThumb(path);
     a.photo_path = path;
     toast('Foto tersimpan.');
     closeDlg(); await refresh(); openDetail(a.id);
