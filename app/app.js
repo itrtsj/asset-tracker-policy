@@ -219,6 +219,27 @@ $('#b-google').addEventListener('click', async () => {
     + '&code_challenge=' + challenge + '&code_challenge_method=s256';
 });
 
+
+/** Supabase mengembalikan hasil verifikasi email sebagai #access_token=… (implicit),
+    bukan ?code=. Tanpa ini, staf yang mengklik tautan konfirmasi mendarat di layar
+    masuk dan mengira pendaftarannya gagal. */
+function sesiDariFragmen() {
+  const h = location.hash.slice(1);
+  if (!h) return false;
+  const p = new URLSearchParams(h);
+  const access = p.get('access_token');
+  if (!access) return false;
+  const sesi = {
+    access,
+    refresh: p.get('refresh_token') || '',
+    exp: Number(p.get('expires_in') || 3600) * 1000 + Date.now(),
+  };
+  history.replaceState(null, '', location.pathname + location.search);
+  if (p.get('error_description') || p.get('error')) return false;
+  saveSession(sesi);
+  return true;
+}
+
 async function handleOAuthReturn() {
   const q = new URLSearchParams(location.search);
   const code = q.get('code');
@@ -958,6 +979,7 @@ $('#f-status').addEventListener('change', e => { state.status = e.target.value; 
 window.addEventListener('storage', e => { if (e.key === KEYS.session) location.reload(); });
 
 (async function boot() {
+  if (sesiDariFragmen()) { showApp(); return; }
   if (!CFG.url || !CFG.key) {
     $('#v-login').hidden = false;
     showLogin('Konfigurasi server belum diisi (config.js).');
