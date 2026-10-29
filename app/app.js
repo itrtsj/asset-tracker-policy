@@ -100,7 +100,7 @@ async function rawFetch(path, {method = 'GET', body, token, headers = {}, binary
     let code = r.status;
     if (path.startsWith('/storage/') && text.includes('"statusCode":"401"')) code = 401;
     const msg = (data && (data.msg || data.error_description || data.message || data.error)) || text;
-    throw new ApiError(code, localize(msg));
+    throw new ApiError(code, localizeOauth(msg));
   }
   return data;
 }
@@ -136,6 +136,7 @@ const sessionFrom = d => {
 function showLogin(msg = '') {
   $('#v-app').hidden = true;
   $('#v-login').hidden = false;
+  peringatanWebview();
   const m = $('#login-msg');
   m.textContent = msg;
   m.className = 'msg';
@@ -188,8 +189,27 @@ async function sha256b64(s) {
   return b64url(new Uint8Array(d));
 }
 
+
+/* Google menolak OAuth di webview dalam aplikasi (Telegram, Instagram, Facebook):
+   "403: disallowed_useragent". Lebih baik diperingatkan di depan daripada gagal
+   dengan pesan Google yang tidak bisa ditindaklanjuti staf. */
+function dalamWebview() {
+  const ua = navigator.userAgent || '';
+  return /Telegram|FBAN|FBAV|Instagram|Line\/|WhatsApp|MicroMessenger|; wv\)/i.test(ua)
+    || /\bwv\b/.test(ua);
+}
+function peringatanWebview() {
+  const w = $('#wv-warn');
+  if (!w) return false;
+  if (!dalamWebview()) { w.hidden = true; return false; }
+  w.hidden = false;
+  w.textContent = 'Anda membuka halaman ini di dalam aplikasi lain. Google menolak masuk dari jendela seperti ini — buka di Chrome: menu ⋮ → "Buka di browser".';
+  return true;
+}
+
 $('#b-google').addEventListener('click', async () => {
   if (!CFG.url) return;
+  if (peringatanWebview()) return;
   const verifier = b64url(crypto.getRandomValues(new Uint8Array(48)));
   sessionStorage.setItem(KEYS.pkce, verifier);
   const challenge = await sha256b64(verifier);
@@ -397,6 +417,21 @@ function dialog(title, body, footer) {
   return d;
 }
 const closeDlg = () => { const d = $('#dlg'); if (d.open) d.close(); };
+
+
+/* Galat OAuth dari Supabase/Google diterjemahkan ke kalimat yang bisa ditindaklanjuti. */
+function localizeOauth(m) {
+  const s = String(m || '');
+  const t = s.toLowerCase();
+  if (t.includes('invalid flow state')) return 'Kode masuk Google tidak berlaku atau sudah dipakai. Coba lagi.';
+  if (t.includes('code verifier')) return 'Sesi masuk Google terputus (cookie situs diblokir?). Coba lagi di Chrome.';
+  if (t.includes('unable to exchange external code')) return 'Google menolak pertukaran kode. Pastikan Google login aktif di Supabase dan redirect URL terdaftar.';
+  if (t.includes('provider is not enabled')) return 'Login Google belum diaktifkan di server.';
+  if (t.includes('redirect_uri_mismatch') || t.includes('redirect uri')) return 'URL halaman ini belum terdaftar sebagai Redirect URL di Supabase.';
+  if (t.includes('access_denied')) return 'Masuk Google dibatalkan.';
+  if (t.includes('disallowed_useragent') || t.includes('useragent')) return 'Google menolak jendela browser ini. Buka di Chrome.';
+  return localize(m);
+}
 
 /** Konfirmasi dalam aplikasi (bukan window.confirm: dialog bawaan memblokir halaman). */
 function askConfirm(title, text, yesLabel = 'Ya') {
